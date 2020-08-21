@@ -1,0 +1,24 @@
+## RUNNING DEMO IN UBUNTU ##
+sudo apt install -y openjdk-8-jre
+
+# Check Java Installation
+java -version
+
+#Run Jenkins
+sudo java -jar jenkins.war --httpPort=80 --prefix=/dashboard
+
+#open the browser a look for the jenkins 
+dashboard
+http://-LOCALIPADDRESS-/dashboard/
+
+## INSTALLATION IN UBUNTU ##
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+
+# adding necessary entries
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+
+# installing jenkins
+sudo apt-get install jenkins
+
+
+ 
