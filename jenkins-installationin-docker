@@ -1,0 +1,38 @@
+## INSTALL JENKINS IN UBUNTU DOCKER CONTAINER ##
+sudo apt update
+sudo apt install -y docker.io
+
+#add your user to docker group
+sudo usermod -aG docker ubuntu
+
+#logout and then relog, and check if you're part of the docker group
+groups
+
+#create the docker container for jenkins
+docker network create jenkins
+docker volume create jenkins-docker-certs
+docker volume create jenkins-data
+docker container run --name jenkins-docker --rm --detach \
+--privileged --network jenkins --network-alias docker \
+--env DOCKER_TLS_CERTDIR=/certs \
+--volume jenkins-docker-certs:/certs/client \
+--volume jenkins-data:/var/jenkins_home \
+--publish 2376:2376 docker:dind
+
+## install the docker interface with the necessary files ##
+docker container run --name jenkins-blueocean --rm --detach \
+--network jenkins --env DOCKER_HOST=tcp://docker:2376 \
+--env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 \
+--volume jenkins-data:/var/jenkins_home \
+--volume jenkins-docker-certs:/certs/client:ro \
+--publish 8080:8080 --publish 50000:50000 jenkinsci/blueocean
+
+## Search in your browser for the ip address of your host where you installed docker ##
+http://-JENKINSIPADDRESS':8080
+cat /var/jenkins_home/secrets/initialAdminPassword
+
+#check your containers
+docker ps
+
+## look for the docker logs in Jenkins blue ocean to check your Jekins unlock password
+docker logs jenkins-blueocean
